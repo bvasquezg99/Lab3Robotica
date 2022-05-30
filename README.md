@@ -78,3 +78,12 @@ qinv(1,1:4) = [q1 q2u q3u q4u]
 qinv(2,1:4) = [q1 q2d q3d q4d];
 disp(rad2deg(qinv))
 ```
+Para verificar mediante el toolbox de Peter Corke, se utilizo el comando ikine, que calcula la cinematica inversa por métodos numéricos. Con esto se comprueba una respuesta que coincide con la solución calculada en codo arriba.
+```matlab
+Mask = [1 1 1 0 0 0]
+qinv_t=PhantomX.ikine(Tt,qinv(1,1:4),Mask)
+disp(rad2deg(qinv_t))
+%Sol ikine:  -20.0000   15.0000  -45.0000   75.0000
+```
+
+
