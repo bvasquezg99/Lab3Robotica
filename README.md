@@ -32,4 +32,49 @@ Tt = PhantomX.fkine(qt);
 T = Tt
 Posw = T(1:3,4) - l(4)*T(1:3,3) %Posición final herramienta
 ```
+Para la primera articulación, su valor articular, solo está determinado por la posición final de la herramienta, por lo tanto:
+```matlab
+q1 = atan2(Posw(2),Posw(1));
+rad2deg(q1)
+```
+Ahora, para determinar los valores de q2 y de q3, el problema se ve reducido a la solución de un mecanismo 2R, con dos posibles soluciones, codo arriba y codo abajo. Para el 2R, su posición final viene en términos los valores de posición final de la muñeca.
+```matlab
+h = Posw(3) - l(1);
+r = sqrt(Posw(1)^2 + Posw(2)^2);
+```
+Ahora, con esas dos distancias determinadas, se plantean las soluciones para ambos casos. Codo arriba y codo abajo, en donde el valor articular dependera de un angulo theta_3 y theta_2, que están en terminos de las distnacias r yh y de las longitudes de eslabon.
+```matlab
+% Codo abajo
+the3 = acos((r^2+h^2-l(2)^2-l(3)^2)/(2*l(2)*l(3)));
+the2 = atan2(h,r) - atan2(l(3)*sin(the3),l(2)+l(3)*cos(the3));
 
+q2d = -(pi/2-the2);
+q3d = the3;
+
+% Codo arriba
+the2 = atan2(h,r) + atan2(l(3)*sin(the3),l(2)+l(3)*cos(the3));
+q2u = -(pi/2-the2);
+q3u = -the3;
+
+disp(rad2deg([q2d q3d; q2u q3u]))
+```
+Ahora para el valor de q4, se conocen los valores de q1, q2 y q3, por lo que se puede calcular la MTH de la base a la  muñeca, y teniendo la MTH de la base a la herramienta, se puede despejar para hallar la matriz de rotación de 3 a la herramienta, y así q4. Esto también se hace para codo arriba y codo abajo.
+```matlab
+% Codo arriba
+T03d = PhantomX.A([1 2 3],[q1 q2d q3d])
+R_3Td = (T03d(1:3,1:3))'*T(1:3,1:3)
+q4d = atan2(R_3Td(1,1),-R_3Td(2,1));
+rad2deg(q4d)
+
+% Codo abajo
+T03u = PhantomX.A([1 2 3],[q1 q2u q3u]);
+R_3Tu = (T03u(1:3,1:3))'*T(1:3,1:3);
+q4u = atan2(R_3Tu(1,1),-R_3Tu(2,1));
+rad2deg(q4u)
+```
+Y finalmente, se obtiene todos los valores articulares, obteniendo el resultado de la cinemática inversa.
+```matlab
+qinv(1,1:4) = [q1 q2u q3u q4u]
+qinv(2,1:4) = [q1 q2d q3d q4d];
+disp(rad2deg(qinv))
+```
