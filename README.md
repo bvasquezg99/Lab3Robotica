@@ -25,7 +25,7 @@ PhantomX.tool = [0 0 1 l(4); -1 0 0 0; 0 -1 0 0; 0 0 0 1];
 
 Con el robot ya construido, el cual para verificar se muestra graficado en la imagen anterior, se empieza con el proceso de cinemática inversa. De acuerdo a lo sugerido en clase, lo primero es el desacople, así se separa el problema, ignorando incialmente el problema de orientación en la muñeca. Así, lo primero es obtener la MTH de la herramienta con respecto a la base. Luego se hace el desacople, reduciendo solo al problema de posición.
 ```matlab
-qt = deg2rad([45, 45, -60, 30]);
+qt = deg2rad([20, -30, 45, 30]);
 Tt = PhantomX.fkine(qt);
 %%
 % Desacople
