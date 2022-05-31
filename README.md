@@ -85,5 +85,12 @@ qinv_t=PhantomX.ikine(Tt,qinv(1,1:4),Mask)
 disp(rad2deg(qinv_t))
 %Sol ikine:  -20.0000   15.0000  -45.0000   75.0000
 ```
+### Espacio de trabajo Phantom X
 
+### Métodos para el cálculo de la cinemática inversa
 
+ikine6s	inverse kinematics for 6-axis spherical wrist revolute robot
+ikine	inverse kinematics using iterative numerical method
+ikunc	inverse kinematics using optimisation
+ikcon	inverse kinematics using optimisation with joint limits
+ikine_sym	analytic inverse kinematics obtained symbolically
