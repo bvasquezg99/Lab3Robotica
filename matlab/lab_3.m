@@ -108,14 +108,15 @@ while 1
                     value = round(map_range(q(i),-5*pi/6,5*pi/6,0,1023))
                     goal_pos(motorSVC,i,value,0.2,movePX_RTB)
                 end
+                pause(0.2);
+                p_rbt.plot(q,'notiles','noname');
             else
-               disp('Fuera de rangos articulares') 
+               disp('Fuera de rangos articulares')
+               q = q_prev;
                break;
             end
-            pause(0.2);
-            p_rbt.plot(q,'notiles','noname');
         end
-        p_rbt.plot(q,'notiles','noname');
+        %p_rbt.plot(q,'notiles','noname');
         pos_final = mth_f(1:3,4)
         change = 0; dir = 0; mov = [0,0,0,0]';
     elseif change & id==4
