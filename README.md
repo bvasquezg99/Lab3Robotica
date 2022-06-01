@@ -116,3 +116,8 @@ proporciona una medida independiente para un  ́angulo de orientación (asuma or
 
 -Se conoce como espacio diestro al conjunto de puntos dentro del espacio de trabajo general, que el manipulador puede alcanzar con todas las orientaciones posibles del efector final.
 
+# Aplicación de Pick and Place
+
+# Aplicación de movimiento en el espacio de la tarea
+
+# Conclusiones
