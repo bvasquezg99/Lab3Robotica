@@ -100,7 +100,7 @@ Tras realizar una consulta sobre las funciones disponibles en el toolbox de Pete
 6. ikinem: Hace el cálculo numérico de la cinemática inversa mediante minimización.
 7. ikine3: permite calcular la cinemática inversa de un manipulador de 3 ejes sin muñeca esférica.
 
-#Análisis
+# Análisis
 
 1. Sabiendo que el robot Phantom X posee 4 GDL, de los cuales 3 corresponden a posición, el GDL restante
 proporciona una medida independiente para un  ́angulo de orientación (asuma orientación en  ́angulos fijos).
