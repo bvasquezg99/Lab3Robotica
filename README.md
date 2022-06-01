@@ -87,6 +87,10 @@ disp(rad2deg(qinv_t))
 ```
 ### Espacio de trabajo Phantom X
 
+En la siguiente imagen, se puede observar el espacio de trabajo para  un PhantomX, con una vista planar:
+
+[![Workspace.png](https://i.postimg.cc/BvHyrdCz/Workspace.png)](https://postimg.cc/8FktWX9d)
+
 ### Métodos para el cálculo de la cinemática inversa
 Tras realizar una consulta sobre las funciones disponibles en el toolbox de Peter Corke, se encontraron los siguientes métodos que se pueden usar para hallar la cinemática inversa de algún manipulador:
 
