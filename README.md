@@ -88,9 +88,14 @@ disp(rad2deg(qinv_t))
 ### Espacio de trabajo Phantom X
 
 ### Métodos para el cálculo de la cinemática inversa
+Tras realizar una consulta sobre las funciones disponibles en el toolbox de Peter Corke, se encontraron los siguientes métodos que se pueden usar para hallar la cinemática inversa de algún manipulador:
 
-ikine6s	inverse kinematics for 6-axis spherical wrist revolute robot
-ikine	inverse kinematics using iterative numerical method
-ikunc	inverse kinematics using optimisation
-ikcon	inverse kinematics using optimisation with joint limits
-ikine_sym	analytic inverse kinematics obtained symbolically
+
+
+1. ikine6s: permite calcular la cinemática inversa de un manipulador de 6 grados de libertad.
+2. ikine: permite calcular la cinemática de cualquier manipulador, usando un metodo numérico iterativo. 
+3. ikunc: permite el cálculo de la cinemática inversa mediante optimización.
+4. ikcon: similar a la anterior, realiza el cálculo nmediante optimización, pero teniendo en cuenta los límites articulares.
+5. ikine_sym: realiza el cálculo de la cinemática inversa utilizando el meotodo análitica y variables simbólicas.
+6. ikinem: Hace el cálculo numérico de la cinemática inversa mediante minimización.
+7. ikine3: permite calcular la cinemática inversa de un manipulador de 3 ejessin muñeca esférica.
