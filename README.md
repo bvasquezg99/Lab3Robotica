@@ -105,12 +105,14 @@ Tras realizar una consulta sobre las funciones disponibles en el toolbox de Pete
 1. Sabiendo que el robot Phantom X posee 4 GDL, de los cuales 3 corresponden a posición, el GDL restante
 proporciona una medida independiente para un  ́angulo de orientación (asuma orientación en  ́angulos fijos).
 ¿De qué  ́angulo de orientación se trata?
-R/ Como se menciona en la pregunta, el robot puede realizar movimiento en los tres ejes cooordenados. En cuanto a la orientación, el análisis muestra que el grado de libertad restante corresponde a un movimiento alrededor del eje y, lo que en ángulo fijo, es llamado pitch.
+
+-Como se menciona en la pregunta, el robot puede realizar movimiento en los tres ejes cooordenados. En cuanto a la orientación, el análisis muestra que el grado de libertad restante corresponde a un movimiento alrededor del eje y, lo que en ángulo fijo, es llamado pitch.
 
 2. ¿Cuántas soluciones posibles existen para la cinemática inversa del manipulador Phantom X ?
-Siempre que se intente realizar la solución para una pose con el manipulador, se tendrán dos alternativas de solución, las llamadas soluciones "codo arriba" y "codo abajo".
+
+-Siempre que se intente realizar la solución para una pose con el manipulador, se tendrán dos alternativas de solución, las llamadas soluciones "codo arriba" y "codo abajo".
 
 3. Consulte en qué consiste el espacio diestro de un manipulador.
 
-Se conoce como espacio diestro al conjunto de puntos dentro del espacio de trabajo general, que el manipulador puede alcanzar con todas las orientaciones posibles del efector final.
+-Se conoce como espacio diestro al conjunto de puntos dentro del espacio de trabajo general, que el manipulador puede alcanzar con todas las orientaciones posibles del efector final.
 
