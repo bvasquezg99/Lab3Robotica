@@ -122,8 +122,20 @@ proporciona una medida independiente para un  ́angulo de orientación (asuma or
 
 -Se conoce como espacio diestro al conjunto de puntos dentro del espacio de trabajo general, que el manipulador puede alcanzar con todas las orientaciones posibles del efector final.
 
+# Aplicaciones
+
+Para estas las apliaciones pick and place y movimiento en el esapcio de la tarea se elegio MatLab pese a su facilidad para el manejo del toolbox de Peter Corke, se realizaron algunos ensayos previos con python pero no fueron del todo exitosos por lo cual se prefirio continuar con el desarrollo del laboratorio en MatLab.
+
 # Aplicación de Pick and Place
+El script completo de este ejercicio lo puede ver [dando clic aqui](matlab/lab_3_p1.m)
+
+[Ver video Aplicación Pick and Place](https://youtu.be/sInh1Wx4ufA)
 
 # Aplicación de movimiento en el espacio de la tarea
+
+El script completo de este ejercicio lo puede ver [dando clic aqui](matlab/lab_3_p2.m)
+
+[Ver video Aplicación de movimiento en el espacio de la tarea](https://youtu.be/qoHWaeiMhog)
+
 
 # Conclusiones
