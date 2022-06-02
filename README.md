@@ -242,6 +242,42 @@ end
 ## Aplicación de Pick and Place
 El script completo de este ejercicio lo puede ver [dando clic aquí](matlab/lab_3_p1.m)
 
+El objetivo de esta aplicación era realizar una operación del tipo Pick and Place, en la cual el robot PhantomX, moviera dos piezas, para realizar un ensamble entre ellas como se muestra en la imágen a continuación:
+
+[![Pickand-Place.png](https://i.postimg.cc/HnMJTXpY/Pickand-Place.png)](https://postimg.cc/N2gG4y9S)
+
+Así, se procedió a modificar el diseño de las piezas para la aplicación, aumentando el diametro del ensamble entre ambas, ya que se vió que el robot no cerraba el gripper lo suficiente para agarrar la pieza 1. Así, se imprimieron, dando como resultado:
+
+[![photo1653866914.jpg](https://i.postimg.cc/Bnb0DsKD/photo1653866914.jpg)](https://postimg.cc/JGfvVfK4)
+
+Con las piezas construidas, se empezó entonces a desarrollar el script para la aplicación. Se decidió usar MATLAB para realizar la aplicación, al igual que en el segundo punto. Así, entonces se comienza defininedo las distancias de los eslabones del motor, y el arreglode id's de los motores para su posterior activación. Se inicializa el toolbox, y se definen dos valores importantes,una bandera, para evitar movimientos inesperados en el robot, y el tiempode pausa entre movimientos.
+
+```matlab
+eslabones = [14.5, 10.7, 10.7, 9.0]; % Longitudes eslabones en cm
+% Ids de los motores sin gripper
+id_m = [1 2 3 4];
+% Inicializar RTB Toolbox
+p_rbt = init_RTB(eslabones);
+% Bandera para habilitar el movimiento del robot PhantomX
+movePX_RTB = 0;
+%set tiempo de pausa entre movimientos
+time_m = 0.2;
+```
+
+```matlab
+if movePX_RTB
+    % Iniciar ROS
+    rosinit;
+    % Creacion del servicio para controlar Dynamixel
+    motorSVC = rossvcclient('dynamixel_workbench/dynamixel_command');
+    for it = 1:4
+        torque_limit(motorSVC,it,850,0.2,movePX_RTB)
+    end
+else
+    motorSVC = 'test';
+end
+
+
 [Ver video Aplicación Pick and Place](https://youtu.be/sInh1Wx4ufA)
 
 ## Aplicación de movimiento en el espacio de la tarea
