@@ -126,12 +126,125 @@ proporciona una medida independiente para un  ́angulo de orientación (asuma or
 
 Para estas las apliaciones pick and place y movimiento en el esapcio de la tarea se elegio MatLab pese a su facilidad para el manejo del toolbox de Peter Corke, se realizaron algunos ensayos previos con python pero no fueron del todo exitosos por lo cual se prefirio continuar con el desarrollo del laboratorio en MatLab.
 
-# Aplicación de Pick and Place
+Para ambas aplicaciones se realizaron algunas funciones compartidas con el fin de simplificar el trabajo y mantener ambos scripts organizados, a continuacion se detalla cada función. La primera funcion que encontramos es [calc_RTB](matlab/calc_RTB.m) esta funcion se encaga de calcular la respuesta adecuada para el movimiento del robot segun la poscion actual y las poses necesarias para llegar a la posicion objetivo.
+
+```matlab
+%% Funcion principal para calcular y mover Robot con CTRAJ
+function [mth_f,q] = calc_RTB(motorSVC,p_rbt,eslabones,matrices,q_prev,id_m,time,movePX_RTB)
+    % Evalua la primera matriz para determinar tipo de trajectoria Codo Arriba o Codo Abajo
+    mth = matrices(:,:,1);
+    q = invKinPxC(mth,eslabones);
+    % Se inicia asumiendo codo abajo sin desfase de PI
+    rta = 1;
+    % Si la articulacion uno tiene un desfase se cambia a codo abajo con desfase de PI
+    if abs(q(rta,1)-q_prev(1))>pi/4
+        rta = 3;
+    end
+    % Si la articulacion 3 tiene un desfase se cambia a codo arriba sumando 1
+    if abs(q(rta,3)+q_prev(3)) < 0.1
+        rta = rta+1;
+    end
+    % Ciclo iterativo para cada matriz de posicion de CTRAJ
+    for iteration=2:length(matrices)
+        % Calculo de cinematica invera de cada matriz
+        mth = matrices(:,:,iteration);
+        q = invKinPxC(mth,eslabones);
+        % Verificacion de la orientacion de la herramienta
+        if abs(q(rta,4)-q_prev(4)) > pi/4
+            if q(rta,4)> 0
+                q(rta,4) = q(rta,4)-pi;
+            else
+                q(rta,4) = q(rta,4)+pi;
+            end
+        end
+        % se establece q para realizar el movimiento
+        q = q(rta,:);
+        % Calculo de cinematica directa con q obtenidos
+        mth_f = p_rbt.fkine(q);
+        % Si la matriz original y la obtenida tienen desfases menores a .1 se ejecuta el movimiento
+        if abs(mth_f(1:3,4)-mth(1:3,4))<0.1
+            % Mover el robot
+            move_RTB(motorSVC,id_m,q,time,movePX_RTB)
+            % Graficar el robot
+            pause(0.2);
+            p_rbt.plot(q,'notiles','noname');
+        else
+            % No se puede calcular correctamente se devuelve a posicion inicial
+            disp('Fuera de rangos articulares')
+            q = q_prev;
+            mth_f = p_rbt.fkine(q);
+            break;
+        end
+    end
+end
+```
+Esta funcion a su vez hace el llamado a la función [move_RTB](matlab/move_RTB.m) que permiete el movimiento del robot en sus diferentes ejes, asegurandose que la cantidad de valores articulares y de id's entregados del robot sean iguales
+
+```matlab
+function move_RTB(motorSVC,ids,q,time,movePX_RTB)
+    if length(ids) == length(q)
+        for i = 1:length(q)
+            value = round(map_range(q(i),-5*pi/6,5*pi/6,0,1023));
+            goal_pos(motorSVC,ids(i),value,time,movePX_RTB);
+        end
+    else    
+        disp('Revise los parametros');
+    end
+end
+```
+
+Para su funcionamiento se creo otra funcion, la cual esta encargada de validar que el valor articular este dentro de los valores posibles y realizar el movimiento si este esta habilitado en el script general. Esta funcion es [goal_pos](matlab/goal_pos.m)
+
+```matlab
+function goal_pos(service,id,value,time,movePX_RTB)
+    if value <= 1023 & value >= 0     
+        if movePX_RTB
+            msg_svc = rosmessage(service);
+            msg_svc.AddrName = "Goal_Position";
+            msg_svc.Id = id;
+            msg_svc.Value = value;
+            call(service,msg_svc);
+            pause(time);
+        else
+            disp("Comando no habilitado")
+        end
+    else
+        disp("Fuera de rangos articulares");
+    end
+end
+```
+
+Tambien se tiene una funcion similar a goal_pos que nos permite establecer los valores de torque de las articulaciones esta funcion se encuentra en [torque_limit](matlab/torque_limit.m)           
+
+Para realizar la cinematica inversa se hizo uso de la funcion dada por el docente de laboratorio la cual es [invKinPxC](matlab/invKinPxC.m)
+
+Por ultimo se tiene dos funciones auxiliares, la primera realiza el mapeo de las variables de un rango a otro, lleva por nombre [map_range](matlab/map_range.m) y basicamente realiza una regla de tres.
+```matlab
+function output = map_range(value,fromLow,fromHigh,toLow,toHigh)
+    narginchk(5,5)
+    nargoutchk(0,1)
+    output = (value - fromLow) .* (toHigh - toLow) ./ (fromHigh - fromLow) + toLow;
+end
+```
+La segunda funcion auxiliar es [init_RTB](matlab/init_RTB.m) que ayuda a inicializar el robot y cargas los parametros al toolbox de Peter Corke
+```matlab
+function PhantomX = init_RTB(l)
+    % Definicion del robot RTB
+    L(1) = Link('revolute','alpha',pi/2,'a',0,   'd',l(1),'offset',0,   'qlim',[-3*pi/4 3*pi/4]);
+    L(2) = Link('revolute','alpha',0,   'a',l(2),'d',0,   'offset',pi/2,'qlim',[-3*pi/4 3*pi/4]);
+    L(3) = Link('revolute','alpha',0,   'a',l(3),'d',0,   'offset',0,   'qlim',[-3*pi/4 3*pi/4]);
+    L(4) = Link('revolute','alpha',0,   'a',0,   'd',0,   'offset',0,   'qlim',[-3*pi/4 3*pi/4]);
+    PhantomX = SerialLink(L,'name','Px');
+    % roty(pi/2)*rotz(-pi/2)
+    PhantomX.tool = [0 0 1 l(4); -1 0 0 0; 0 -1 0 0; 0 0 0 1];
+end
+```
+## Aplicación de Pick and Place
 El script completo de este ejercicio lo puede ver [dando clic aquí](matlab/lab_3_p1.m)
 
 [Ver video Aplicación Pick and Place](https://youtu.be/sInh1Wx4ufA)
 
-# Aplicación de movimiento en el espacio de la tarea
+## Aplicación de movimiento en el espacio de la tarea
 
 El script completo de este ejercicio lo puede ver [dando clic aquí](matlab/lab_3_p2.m)
 
