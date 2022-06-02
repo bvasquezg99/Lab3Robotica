@@ -263,7 +263,7 @@ movePX_RTB = 0;
 %set tiempo de pausa entre movimientos
 time_m = 0.2;
 ```
-
+A continuación si la bandera de movimiento está habilitada, se inicia ROS, y se conecta a los motores, a la vez poniendoles un límite de torque para el momento que hagan su movimiento. mediante la función torque_limit.
 ```matlab
 if movePX_RTB
     % Iniciar ROS
@@ -276,7 +276,95 @@ if movePX_RTB
 else
     motorSVC = 'test';
 end
+```
+Posteriormente, se definieron todas las poses finales del robot, para la realización de las trayectorias de pick and place. Estas fueron medidas y determinadas también con ayuda de la cinemática directa. Todas estas poses serán los instrumentos para la cinemática inversa del manipulador. Se muestran a continuación:
+```matlab
+mth_t1_a =      [0   1    0     0;
+                1   0    0  15.5;
+                0   0   -1  14.0;
+                0   0    0    1];
+             
+mth_t1_p =      [0   1    0     0;
+                1   0    0  15.5;
+                0   0   -1   6.0;
+                0   0    0    1];
 
+mth_t2_p_a =    [0  -1    0     0;
+                -1   0    0 -15.5;
+                 0   0   -1    14;
+                 0   0    0    1]; 
+             
+mth_t2_p =      [0  -1   0      0;
+                -1   0   0  -15.5;
+                 0   0  -1    4.5;
+                 0   0   0     1];             
+
+mth_t1_a_pl =   [-1   0   0 -15.5;
+                  0   1   0     0;
+                  0   0  -1    14;
+                  0   0   0    1];
+              
+mth_t1_pl =     [-1   0   0 -15.5;
+                  0   1   0     0;
+                  0   0  -1     6;
+                  0   0   0    1];                  
+```
+Durante todo el recorrido, se trabajará con las soluciones codo arriba, por lo que se define esto mediante la variable rta. Deigual manera, se asignan los valores de apertura y cierre para el grupper, así como su id, que no estaba definido al inicio. Finalmente mediante la función goal_pos se abre el gripper y se mueve el robot a la posición establecida como home, ya mediante la cinemática inversa. 
+```matlab
+% Solucion Codo Arriba
+rta = 4;
+% gripper abierto
+gripper_open = 512;
+% gripper cerrado 666 para t2
+gripper_close_2 = 666;
+% gripper cerrado para t1
+gripper_close_1 = 40;
+% ID gripper
+gripper_id = 5;
+% Abrir Gripper
+goal_pos(motorSVC,gripper_id,gripper_open,0.5,movePX_RTB);
+% Establece posicion Home
+mth_home = mth_t1_a_pl;
+q = invKinPxC(mth_home,eslabones);
+q = q(rta,:);
+q(4) = q(4)+pi;
+```
+Para tener un seguimiento, y como verificación antes de realizar el movimiento, se gráfica el robot y además se establece el número de puntos que generará el comando ctraj a lo largo de la ruta, para realizar la trayectoria asignada.
+```matlab
+% Posicionar RTB
+move_RTB(motorSVC,id_m,q,time_m,movePX_RTB)
+% Graficar el Movimiento
+p_rbt.plot(q,'notiles','noname');
+hold on
+ws = [-50 50];
+trplot(eye(4),'rgb','arrow','length',15,'frame','0')
+axis([repmat(ws,1,2) 0 60])
+view([25.4 34.2]);
+% set cantidad de matrices ctraj
+mth_quantity = 6;
+```
+Así, entonces con las funciones antes definidas, y con el robot en su posición de home, se procede a comenzar con los movimientos. En primer lugar, se realiza la rotación de la primera articulación para recoger la pieza 1 a la derecha del robot. Tras esto, se define la trayectoria para el movimiento de pick de la pieza 1. Para esto se usa la matriz de transformación de la posición actual, y la de la posición deseada, y se usa el comando ctraj y la función calc_RTB para realizar el movimiento. Se cierra el gripper para recoger la pieza 1, y se realiza un procedimiento similar para volver a la posición superior.
+```matlab
+% Primer Movimiento Horizontal
+q(1) = q(1)-pi/2;
+move_RTB(motorSVC,id_m,q,time_m,movePX_RTB);
+% Pick pieza tipo 1
+mth_home = p_rbt.fkine(q);
+mth_obj = mth_t1_p;
+matrices = ctraj(mth_home,mth_obj,mth_quantity);
+% Calcular y mover Robot a las poses ctraj
+calc_RTB(motorSVC,p_rbt,eslabones,matrices,q,id_m,time_m,movePX_RTB);
+% Cerrar Gripper
+goal_pos(motorSVC,gripper_id,gripper_close_1,time_m,movePX_RTB);
+
+% Movimiento vertical pieza tipo 1
+mth_home = p_rbt.fkine(q);
+mth_obj = mth_t1_a;
+matrices = ctraj(mth_home,mth_obj,mth_quantity);
+% Calcular y mover Robot a las poses ctraj
+calc_RTB(motorSVC,p_rbt,eslabones,matrices,q,id_m,time_m,movePX_RTB);
+```
+Se comanda de forma similar el resto de trayectorias, realizando finalmente todos los movimientos, como se puede evidenciar en el video. Al final el robot deja pieza 1 y 2 en la posición deseada y retorna a home.
 
 [Ver video Aplicación Pick and Place](https://youtu.be/sInh1Wx4ufA)
 
