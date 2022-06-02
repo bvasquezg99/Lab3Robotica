@@ -91,6 +91,8 @@ En la siguiente imagen, se puede observar el espacio de trabajo para  un Phantom
 
 [![Workspace.png](https://i.postimg.cc/BvHyrdCz/Workspace.png)](https://postimg.cc/8FktWX9d)
 
+Tomada de: Toquica, H (2018). PhantomX Pincher Specifications. Disponible en: https://www.researchgate.net/publication/322222351_PhantomX_Pincher_Specifications
+
 ### Métodos para el cálculo de la cinemática inversa
 Tras realizar una consulta sobre las funciones disponibles en el toolbox de Peter Corke, se encontraron los siguientes métodos que se pueden usar para hallar la cinemática inversa de algún manipulador:
 
