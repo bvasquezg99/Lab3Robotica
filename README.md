@@ -112,19 +112,19 @@ Tras realizar una consulta sobre las funciones disponibles en el toolbox de Pete
 proporciona una medida independiente para un  ́angulo de orientación (asuma orientación en  ́angulos fijos).
 ¿De qué  ́angulo de orientación se trata?
 
--Como se menciona en la pregunta, el robot puede realizar movimiento en los tres ejes cooordenados. En cuanto a la orientación, el análisis muestra que el grado de libertad restante corresponde a un movimiento alrededor del eje y, lo que en ángulo fijo, es llamado pitch.
+- Como se menciona en la pregunta, el robot puede realizar movimiento en los tres ejes cooordenados. En cuanto a la orientación, el análisis muestra que el grado de libertad restante corresponde a un movimiento alrededor del eje y, lo que en ángulo fijo, es llamado pitch.
 
 2. ¿Cuántas soluciones posibles existen para la cinemática inversa del manipulador Phantom X ?
 
--Siempre que se intente realizar la solución para una pose con el manipulador, se tendrán dos alternativas de solución, las llamadas soluciones "codo arriba" y "codo abajo".
+- Siempre que se intente realizar la solución para una pose con el manipulador, se tendrán dos alternativas de solución, las llamadas soluciones "codo arriba" y "codo abajo".
 
 3. Consulte en qué consiste el espacio diestro de un manipulador.
 
--Se conoce como espacio diestro al conjunto de puntos dentro del espacio de trabajo general, que el manipulador puede alcanzar con todas las orientaciones posibles del efector final.
+- Se conoce como espacio diestro al conjunto de puntos dentro del espacio de trabajo general, que el manipulador puede alcanzar con todas las orientaciones posibles del efector final.
 
 # Aplicaciones
 
-Para estas las apliaciones pick and place y movimiento en el esapcio de la tarea se elegio MatLab pese a su facilidad para el manejo del toolbox de Peter Corke, se realizaron algunos ensayos previos con python pero no fueron del todo exitosos por lo cual se prefirio continuar con el desarrollo del laboratorio en MatLab.
+Para estas las apliaciones pick and place y movimiento en el espacio de la tarea se elegio MatLab pese a su facilidad para el manejo del toolbox de Peter Corke, se realizaron algunos ensayos previos con python pero no fueron del todo exitosos por lo cual se prefirio continuar con el desarrollo del laboratorio en MatLab.
 
 Para ambas aplicaciones se realizaron algunas funciones compartidas con el fin de simplificar el trabajo y mantener ambos scripts organizados, a continuacion se detalla cada función. La primera funcion que encontramos es [calc_RTB](matlab/calc_RTB.m) esta funcion se encaga de calcular la respuesta adecuada para el movimiento del robot segun la poscion actual y las poses necesarias para llegar a la posicion objetivo.
 
@@ -239,6 +239,20 @@ function PhantomX = init_RTB(l)
     PhantomX.tool = [0 0 1 l(4); -1 0 0 0; 0 -1 0 0; 0 0 0 1];
 end
 ```
+
+ ## ROS
+ 
+ Para la conexion con ROS se uso de base el paquete px_robot, pero este fue renombrado como px_robot_l3, asi que se debe tener en cuenta este cambio al ejecutar los comando de catkin build y los respectivos archivos launch a utilizar
+ ```bash
+ cd ~/catkin_ws
+ catkin build px_robot_l3
+ ```
+ Los archivos launch utilizados fueron:
+ - [px_controllers.launch](launch/px_controllers.launch) para el control de movimiento de los motores dynamixel
+ - [px_rviz_dyna.launch](launch/px_rviz_dyna.launch) para la visualización del movimiento en RVIZ
+
+Estos archivos se deben de ejecutar antes de ejecutar cualquiera de los scripts de MATLAB.
+ 
 ## Aplicación de Pick and Place
 El script completo de este ejercicio lo puede ver [dando clic aquí](matlab/lab_3_p1.m)
 
